@@ -4,9 +4,8 @@ FROM oven/bun:latest
 # Create app directory
 WORKDIR /app
 
-# Copy package manifest(s) first for better layer caching
+# Copy package manifest for better layer caching
 COPY package.json ./
-COPY bun.lockb ./
 
 # Install production dependencies. If there is no bun.lockb, bun will proceed anyway.
 RUN bun install --production || true
