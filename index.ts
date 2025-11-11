@@ -1,5 +1,4 @@
-import { Client, Events, GatewayIntentBits, TextChannel } from "discord.js";
-import * as send from "./src/lib/send";
+import { Client, Events, GatewayIntentBits } from "discord.js";
 import Timeline from "./src/timeline";
 
 const client: Client = new Client({ intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages, GatewayIntentBits.MessageContent] });
