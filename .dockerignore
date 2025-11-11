@@ -1,0 +1,12 @@
+node_modules
+.git
+.env
+*.log
+dist
+.DS_Store
+.idea
+tmp
+coverage
+npm-debug.log
+yarn-error.log
+# Optionally exclude local editor or OS junk
