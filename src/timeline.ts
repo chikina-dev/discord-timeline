@@ -1,5 +1,4 @@
 import { Client, ForumChannel, Events, EmbedBuilder, TextChannel } from "discord.js";
-import * as send from "./lib/send";
 import { styleText } from "util";
 
 type ThreadsType = {
