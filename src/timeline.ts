@@ -8,10 +8,10 @@ type ThreadsType = {
 }
 
 async function Timeline(client: Client) {
-  // const channelIds = ["1320728461937217578", "1320645439699026000"];
-  const channelIds = ["1320666925365465138", "1386000000965804063"]
-  // const logChannelId = "1326392798529982525";
-  const logChannelId = "1321004091710902333";
+  const channelIds = ["1320728461937217578", "1320645439699026000"];
+  // const channelIds = ["1320666925365465138", "1386000000965804063"]
+  const logChannelId = "1326392798529982525";
+  // const logChannelId = "1321004091710902333";
   const logChannel = client.channels.cache.get(logChannelId) as TextChannel;
   const channels = channelIds
     .map(id => client.channels.cache.get(id))
