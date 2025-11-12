@@ -1,5 +1,6 @@
 import { Client, ForumChannel, Events, EmbedBuilder, TextChannel } from "discord.js";
 import { styleText } from "util";
+import Settings from "../setting";
 
 type ThreadsType = {
   name: string;
@@ -7,18 +8,14 @@ type ThreadsType = {
 }
 
 async function Timeline(client: Client) {
-  const channelIds = ["1320728461937217578", "1320645439699026000"];
-  // const channelIds = ["1320666925365465138", "1386000000965804063"]
-  const logChannelId = "1326392798529982525";
-  // const logChannelId = "1321004091710902333";
-  const logChannel = client.channels.cache.get(logChannelId) as TextChannel;
-  const channels = channelIds
+  const logChannel = client.channels.cache.get(Settings.DISCORD_LOG_CHANNEL_ID) as TextChannel;
+  const channels = Settings.DISCORD_FORUM_CHANNEL_ID
     .map(id => client.channels.cache.get(id))
     .filter((c): c is ForumChannel => !!c);
   const threadArrays = await Promise.all(channels.map(getThreads));
   const threads = threadArrays.flat();
   client.on(Events.ThreadCreate, async (thread) => {
-    if (thread.parentId && channelIds.includes(thread.parentId)) {
+    if (thread.parentId && Settings.DISCORD_FORUM_CHANNEL_ID.includes(thread.parentId)) {
       console.log("新規スレッド検出:", thread.name);
       if (!threads.find(t => t.id === thread.id)) {
         const channel = client.channels.cache.get(thread.parentId) as ForumChannel;
@@ -26,11 +23,7 @@ async function Timeline(client: Client) {
           .setTitle(`${channel.name}にて新規スレッド`)
           .setDescription(`スレッド名: ${thread.name}`)
           .setTimestamp(new Date());
-        if (logChannel && logChannel.isTextBased()) {
-          await logChannel.send({ embeds: [embed] });
-        } else {
-          console.error("Log channel is not a text channel or does not exist.");
-        }
+        await logChannel.send({ embeds: [embed] });
         threads.push({
           name: thread.name,
           id: thread.id,
@@ -47,24 +40,30 @@ async function Timeline(client: Client) {
     const content = message.content || null;
     const attachments = [...message.attachments.values()];
     getLog(content);
+    if (attachments.length > 0 && !content) {
+      logChannel.send({ files: attachments.map(att => att.url) });
+      return;
+    }
+    if (!content) return;
 
     const embed = new EmbedBuilder()
       .setAuthor({
         name: message.author.username,
-        iconURL: message.author.displayAvatarURL(),})
+        iconURL: message.author.displayAvatarURL()
+      })
       .setTitle(thread.name)
-      .setDescription(content || "No content")
+      .setDescription(content)
       .setColor("Grey")
       .setURL(`https://discord.com/channels/${message.guildId}/${message.channelId}/${message.id}`)
       .setTimestamp(message.createdAt)
       .setImage(attachments[0]?.url ? attachments[0]?.url : null)
 
-    if (logChannel && logChannel.isTextBased()) {
-      await logChannel.send({ embeds: [embed] });
-    } else {
-      console.error("Log channel is not a text channel or does not exist.");
-    }
+    const embeds = message.embeds;
 
+    await logChannel.send({ embeds: [embed] });
+    if (embeds.length > 0) {
+      await logChannel.send({ embeds: embeds });
+    }
   })
 }
 
