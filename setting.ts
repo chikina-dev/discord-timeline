@@ -18,7 +18,7 @@ export function getSettings(): SettingType {
   const DISCORD_BOT_NAME = getEnv("DISCORD_BOT_NAME");
   const NODE_ENV = getEnv("NODE_ENV") || "development";
   const prod_forum_channelIds = ["1320728461937217578", "1320645439699026000"];
-  const prod_log_channelId = "1326392798529982525";
+  const prod_log_channelId = "1387329518905196545";
   const dev_forum_channelIds = ["1320666925365465138", "1386000000965804063"];
   const dev_log_channelId = "1321004091710902333";
   if (!DISCORD_BOT_TOKEN) {
