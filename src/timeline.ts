@@ -41,7 +41,7 @@ async function Timeline(client: Client) {
     const attachments = [...message.attachments.values()];
     getLog(content);
 
-    const username = message.author.displayName || message.author.username;
+    const username = message.member?.displayName || message.author.displayName || message.author.username;
 
     const embed = new EmbedBuilder()
       .setAuthor({
