@@ -43,5 +43,5 @@ jobs:
           passphrase: ${{ env.SSH_PASSPHRASE }}
           script: |
             cd ~/srv/discord-bots
-            docker-compose pull ${{ github.event.repository.name }}
-            docker-compose up -d ${{ github.event.repository.name }}
+            docker compose pull ${{ github.event.repository.name }}
+            docker compose up -d ${{ github.event.repository.name }}
