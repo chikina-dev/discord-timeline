@@ -7,10 +7,16 @@
   "description": "A template for creating Discord bots using TypeScript and Bun.",
   "scripts": {
     "start": "bun run index.ts",
-    "dev": "NODE_ENV=development bun run --watch index.ts"
+    "dev": "NODE_ENV=development bun run --watch index.ts",
+    "lint": "biome check",
+    "format:check": "biome format --check \"**/*.{ts,js,json,md}\"",
+    "format": "biome format \"**/*.{ts,js,json,md}\"",
+    "typecheck": "tsc -p tsconfig.json --noEmit"
   },
   "devDependencies": {
-    "@types/bun": "latest"
+    "@types/bun": "latest",
+    "biome": "latest",
+    "typescript": "^5.4.0"
   },
   "peerDependencies": {
     "typescript": "^5"

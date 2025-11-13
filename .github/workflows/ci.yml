@@ -1,0 +1,46 @@
+name: CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  checks:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: Install dependencies (bun)
+        run: |
+          bun install
+
+      - name: Run biome (lint)
+        run: |
+          bunx biome check
+
+      - name: Run biome format check
+        run: |
+          bunx biome format --check "**/*.{ts,js,json,md}"
+
+      - name: Typecheck (tsc)
+        run: |
+          bunx tsc -p tsconfig.json --noEmit
+
+      - name: Create CI marker
+        run: |
+          mkdir -p ci
+          echo "ci:ok" > ci/ci-passed.txt
+
+      - name: Upload CI artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ci-passed
+          path: ci/ci-passed.txt
