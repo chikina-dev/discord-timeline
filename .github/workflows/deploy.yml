@@ -44,4 +44,5 @@ jobs:
           script: |
             cd ~/srv/discord-bots
             docker compose pull ${{ github.event.repository.name }}
+            docker compose rm -f ${{ github.event.repository.name }} || true
             docker compose up -d ${{ github.event.repository.name }}
