@@ -40,15 +40,12 @@ async function Timeline(client: Client) {
     const content = message.content || null;
     const attachments = [...message.attachments.values()];
     getLog(content);
-    if (attachments.length > 0 && !content) {
-      logChannel.send({ files: attachments.map(att => att.url) });
-      return;
-    }
-    if (!content) return;
+
+    const username = message.author.displayName || message.author.username;
 
     const embed = new EmbedBuilder()
       .setAuthor({
-        name: message.author.username,
+        name: username,
         iconURL: message.author.displayAvatarURL()
       })
       .setTitle(thread.name)
@@ -59,6 +56,20 @@ async function Timeline(client: Client) {
       .setImage(attachments[0]?.url ? attachments[0]?.url : null)
 
     const embeds = message.embeds;
+
+    const isIncludeUrl = (content?.match(/https?:\/\/\S+/g)?.length ?? 0) > 0;
+    if (isIncludeUrl) {
+      setTimeout(async () => {
+        const target = client.channels.cache.get(message.channelId) as TextChannel;
+        const fetchedMessage = await target.messages.fetch(message.id);
+        const newEmbeds = fetchedMessage.embeds;
+        for (const e of newEmbeds) {
+          if (!embeds.find(em => em.url === e.url)) {
+            logChannel.send({ embeds: [e] });
+          }
+        }
+      }, 1000);
+    }
 
     await logChannel.send({ embeds: [embed] });
     if (embeds.length > 0) {

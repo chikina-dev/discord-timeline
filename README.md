@@ -1,6 +1,6 @@
 # discord-ts-template
 
-自分がDiscord bot 使う時用のメモ
+自分のサーバーでは趣味関連をスレッドに投稿するようにしているのだが、適宜そのスレッドを訪れるのが面倒なので、通知用のチャンネルにスレッドの更新を通知するBotを作成した。
 
 To install dependencies:
 
