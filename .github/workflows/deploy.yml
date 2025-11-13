@@ -40,6 +40,6 @@ jobs:
           username: ${{ env.SERVER_USER }}
           key: ${{ env.SSH_KEY }}
           script: |
-            cd /srv/discord-bots
+            cd ~/srv/discord-bots
             docker-compose pull ${{ github.event.repository.name }}
             docker-compose up -d ${{ github.event.repository.name }}
