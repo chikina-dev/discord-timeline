@@ -31,6 +31,15 @@ async function Timeline(client: Client) {
       }
     }
   });
+  client.on(Events.ThreadUpdate, async (oldThread, newThread) => {
+    if (newThread.parentId && Settings.DISCORD_FORUM_CHANNEL_ID.includes(newThread.parentId)) {
+      const thread = threads.find(t => t.id === newThread.id);
+      if (thread && thread.name !== newThread.name) {
+        console.log("スレッド名変更検出:", oldThread.name, "→", newThread.name);
+        thread.name = newThread.name;
+      }
+    }
+  });
   client.on(Events.MessageCreate, async (message) => {
     const thread = threads.find(t => t.id === message.channelId);
     if (!thread) return;
@@ -54,24 +63,21 @@ async function Timeline(client: Client) {
       .setImage(attachments[0]?.url ? attachments[0]?.url : null)
 
     const embeds = message.embeds;
+    const allEmbeds = [embed, ...embeds];
 
     const isIncludeUrl = (content?.match(/https?:\/\/\S+/g)?.length ?? 0) > 0;
+    const sentMessage = await logChannel.send({ embeds: allEmbeds });
+
     if (isIncludeUrl) {
       setTimeout(async () => {
         const target = client.channels.cache.get(message.channelId) as TextChannel;
         const fetchedMessage = await target.messages.fetch(message.id);
         const newEmbeds = fetchedMessage.embeds;
-        for (const e of newEmbeds) {
-          if (!embeds.find(em => em.url === e.url)) {
-            logChannel.send({ embeds: [e] });
-          }
+        const additionalEmbeds = newEmbeds.filter(e => !embeds.find(em => em.url === e.url));
+        if (additionalEmbeds.length > 0) {
+          await sentMessage.edit({ embeds: [...allEmbeds, ...additionalEmbeds] });
         }
       }, 1000);
-    }
-
-    await logChannel.send({ embeds: [embed] });
-    if (embeds.length > 0) {
-      await logChannel.send({ embeds: embeds });
     }
   })
 }
