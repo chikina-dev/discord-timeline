@@ -32,8 +32,6 @@ async function Timeline(client: Client) {
     }
   });
   client.on(Events.MessageCreate, async (message) => {
-    if (message.author.bot) return;
-
     const thread = threads.find(t => t.id === message.channelId);
     if (!thread) return;
 
